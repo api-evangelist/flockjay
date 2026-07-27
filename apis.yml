@@ -1,8 +1,29 @@
 aid: flockjay
+accessModel:
+  pricing: unknown
+  onboarding: unknown
+  trial: false
+  try_now: false
+  public: false
+  label: Unknown
+  confidence: low
+  source: []
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/flockjay.png
 name: Flockjay
-description: Flockjay is a company surfaced as a portfolio company of lightspeed-venture-partners and
-  added to the API Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment
-  pipeline.
+description: >-
+  Flockjay is a sales enablement platform that helps revenue teams capture,
+  organize, and scale their best practices. It combines a learning management
+  system, a content and knowledge management system, and AI-powered coaching —
+  including semantic search across sales content, real-time deal and rep
+  coaching, call scoring, and pitch grading — so sales leaders, revenue
+  operations, and enablement professionals can onboard reps faster and reinforce
+  winning behaviors. Flockjay advertises 50+ integrations with tools such as
+  Slack, Zoom, and common CRMs. The company is backed by Lightspeed Venture
+  Partners. Flockjay does not publish a public developer API or developer portal;
+  this API Evangelist profile captures its public web, trust, integration, and
+  security surface.
 url: https://raw.githubusercontent.com/api-evangelist/flockjay/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -12,12 +33,39 @@ x-tier: stub
 x-tier-reason: portfolio-lead
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-19'
 tags:
 - Company
+- Sales Enablement
+- Sales Training
+- Learning Management
+- Revenue Operations
+- AI Coaching
+- Content Management
+- SaaS
 apis: []
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+common:
+- type: DomainSecurity
+  url: security/flockjay-domain-security.yml
+- type: Website
+  url: https://flockjay.com
+- type: Login
+  url: https://flockjay.com/login
+- type: Integrations
+  url: https://flockjay.com/product/integrations
+- type: TrustCenter
+  url: https://flockjay.com/product/trust-center
+- type: PrivacyPolicy
+  url: https://flockjay.com/legal/privacy-policy
+- type: TermsOfService
+  url: https://flockjay.com/legal/terms-and-conditions
+x-enrichment:
+  date: '2026-07-19'
+  status: backfilled
+  pass: local-v1
+  note: backfilled from .gitignore signal + verified work evidence
