@@ -1,15 +1,17 @@
 aid: flockjay
 accessModel:
   pricing: unknown
-  onboarding: unknown
+  onboarding: sales-led
   trial: false
   try_now: false
   public: false
-  label: Unknown
-  confidence: low
-  source: []
-  generated: '2026-07-22'
-  method: derived
+  label: Demo request only
+  confidence: high
+  source:
+  - https://flockjay.com/request-demo
+  - plans/flockjay-plans-pricing.yml
+  generated: '2026-08-14'
+  method: searched
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/flockjay.png
 name: Flockjay
 description: >-
@@ -20,20 +22,24 @@ description: >-
   coaching, call scoring, and pitch grading — so sales leaders, revenue
   operations, and enablement professionals can onboard reps faster and reinforce
   winning behaviors. Flockjay advertises 50+ integrations with tools such as
-  Slack, Zoom, and common CRMs. The company is backed by Lightspeed Venture
-  Partners. Flockjay does not publish a public developer API or developer portal;
-  this API Evangelist profile captures its public web, trust, integration, and
-  security surface.
+  Gong, Chorus, Clari Copilot, Slack, Microsoft Teams, Zoom, Salesforce and Okta,
+  and is backed by Lightspeed Venture Partners, e.ventures and Salesforce
+  Ventures. Flockjay runs a Django REST Framework API at api.flockjay.com whose
+  root anonymously enumerates 20 collections across two version trees, and a
+  hosted, OAuth 2.1-protected Model Context Protocol server at
+  api.flockjay.com/mcp that it announced on its own blog. Neither is documented:
+  there is no developer portal, no API reference, no OpenAPI, no SDK and no
+  pricing page anywhere on flockjay.com.
 url: https://raw.githubusercontent.com/api-evangelist/flockjay/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - lightspeed-venture-partners
-x-tier: stub
-x-tier-reason: portfolio-lead
+x-tier: profiled
+x-tier-reason: live-api-and-mcp-server-discovered
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-19'
+modified: '2026-08-14'
 tags:
 - Company
 - Sales Enablement
@@ -43,29 +49,131 @@ tags:
 - AI Coaching
 - Content Management
 - SaaS
-apis: []
+- MCP
+- Agent Native
+- OAuth
+apis:
+- name: Flockjay API
+  description: >-
+    Django REST Framework API behind the Flockjay platform. The API root at
+    https://api.flockjay.com/api/ is anonymously readable and enumerates 20
+    collections across an unversioned v1 tree (events, questions, course, module,
+    submodule, assignment_submissions, assignments, live_sessions, groups,
+    rubrics, users) and a /v2/ tree (user, learning-content, progress,
+    sharedcontent, event, task, user_certificate, assignment-submission, search).
+    Every collection requires a Flockjay-issued token. No OpenAPI, no reference
+    documentation and no developer portal is published — the profile below was
+    established by probing the host.
+  humanURL: https://api.flockjay.com/api/
+  baseURL: https://api.flockjay.com/api/
+  tags:
+  - Sales Enablement
+  - Learning Management
+  - Content Management
+  - Revenue Operations
+  properties:
+  - type: Authentication
+    url: authentication/flockjay-authentication.yml
+  - type: Conventions
+    url: conventions/flockjay-conventions.yml
+  - type: DataModel
+    url: data-model/flockjay-data-model.yml
+  - type: ErrorCatalog
+    url: errors/flockjay-problem-types.yml
+  - type: RateLimits
+    url: rate-limits/flockjay-rate-limits.yml
+  - type: Conformance
+    url: conformance/flockjay-conformance.yml
+  - type: JSONSchema
+    url: json-schema/flockjay-events-options-metadata.json
+- name: Flockjay MCP Server
+  description: >-
+    Hosted, first-party Model Context Protocol server that gives AI assistants
+    read access to a customer's enablement data — rep certification and learning
+    progress, coaching scorecards and call scores, and shared-content performance.
+    Announced by Flockjay as "a first-of-its-kind capability for the enablement
+    space". The endpoint answers JSON-RPC over HTTPS and is protected by OAuth 2.1
+    authorization-code + PKCE with dynamic client registration; anonymous
+    tools/list returns HTTP 401 with an RFC 9728 challenge, so the tool list and
+    input schemas are not public.
+  humanURL: https://flockjay.com/resources/blog/ai-enablement-mcp-server
+  baseURL: https://api.flockjay.com/mcp
+  tags:
+  - MCP
+  - Agent Native
+  - Sales Enablement
+  - AI Coaching
+  properties:
+  - type: MCPServer
+    url: mcp/flockjay-mcp.yml
+  - type: MCPServer
+    url: https://api.flockjay.com/mcp
+  - type: Authentication
+    url: authentication/flockjay-authentication.yml
+  - type: OAuthScopes
+    url: scopes/flockjay-scopes.yml
+  - type: Documentation
+    url: https://flockjay.com/resources/blog/ai-enablement-mcp-server
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
-- type: DomainSecurity
-  url: security/flockjay-domain-security.yml
 - type: Website
   url: https://flockjay.com
 - type: Login
   url: https://flockjay.com/login
 - type: Integrations
   url: https://flockjay.com/product/integrations
+- type: Blog
+  url: https://flockjay.com/resources/blog
+- type: Support
+  url: https://flockjay.com/resources/support
+- type: GitHubOrganization
+  url: https://github.com/Flockjay
 - type: TrustCenter
   url: https://flockjay.com/product/trust-center
 - type: PrivacyPolicy
   url: https://flockjay.com/legal/privacy-policy
 - type: TermsOfService
   url: https://flockjay.com/legal/terms-and-conditions
+- type: MCPServer
+  url: mcp/flockjay-mcp.yml
+- type: WellKnown
+  url: well-known/flockjay-well-known.yml
+- type: Authentication
+  url: authentication/flockjay-authentication.yml
+- type: OAuthScopes
+  url: scopes/flockjay-scopes.yml
+- type: Conventions
+  url: conventions/flockjay-conventions.yml
+- type: ErrorCatalog
+  url: errors/flockjay-problem-types.yml
+- type: DataModel
+  url: data-model/flockjay-data-model.yml
+- type: Conformance
+  url: conformance/flockjay-conformance.yml
+- type: Lifecycle
+  url: lifecycle/flockjay-lifecycle.yml
+- type: Plans
+  url: plans/flockjay-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/flockjay-rate-limits.yml
+- type: Packages
+  url: packages/flockjay-packages.yml
+- type: LLMsTxt
+  url: llms/flockjay-llms.txt
+- type: DomainSecurity
+  url: security/flockjay-domain-security.yml
+- type: VulnerabilityDisclosure
+  url: security/flockjay-vulnerability-disclosure.yml
+- type: Security
+  url: security/flockjay-vulnerability-disclosure.yml
+- type: TrustCenter
+  url: security/flockjay-trust-center.yml
 x-enrichment:
-  date: '2026-07-19'
-  status: backfilled
+  date: '2026-08-14'
+  status: enriched
+  artifacts_added: 21
   pass: local-v1
-  note: backfilled from .gitignore signal + verified work evidence
