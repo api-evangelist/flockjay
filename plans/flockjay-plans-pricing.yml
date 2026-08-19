@@ -1,0 +1,55 @@
+generated: '2026-08-14'
+method: searched
+source: >-
+  https://flockjay.com/sitemap.xml (158 URLs, no pricing page),
+  https://flockjay.com/pricing (HTTP 200 SPA shell — soft-404, no pricing content),
+  and https://flockjay.com/request-demo. Checked 2026-08-14.
+name: Flockjay plans and pricing
+description: >-
+  Flockjay publishes no pricing. There is no pricing page, no plan tiers, no free
+  trial and no self-serve signup — the single conversion path across the entire site
+  is a "Book Demo" form. API and MCP access are not priced or packaged publicly
+  either; nothing on the site says whether they are included in a subscription or
+  sold separately.
+
+plan_count: 0
+pricing_published: false
+free_tier: false
+trial: false
+self_serve_signup: false
+onboarding: sales-led
+currency: null
+plans: []
+
+api_pricing:
+  published: false
+  note: >-
+    No metering, quota, seat or call-volume pricing is published for the REST API or
+    the MCP server. The MCP announcement says the capability is "available today to
+    any team running Flockjay", which implies it is bundled with the platform
+    subscription, but no page states that as a commitment.
+
+evidence:
+- url: https://flockjay.com/pricing
+  status: 200
+  note: >-
+    Returns the 2,197-byte React SPA shell served for every unrouted path. Not a
+    pricing page. Recorded as a miss, not a hit.
+- url: https://flockjay.com/sitemap.xml
+  status: 200
+  note: 158 URLs, none matching /pricing, /plans or /packages.
+- url: https://flockjay.com/request-demo
+  status: 200
+  note: The actual conversion surface — a demo request form.
+
+findings:
+- >-
+  Every "Book Demo" and "Are you ready?" call to action on the site routes to
+  /request-demo. There is no price anywhere on flockjay.com.
+- >-
+  An honest zero: Flockjay is enterprise sales-led and does not attempt a published
+  price. This is a commercial-clarity gap, not a data-collection failure.
+
+related:
+  lifecycle: lifecycle/flockjay-lifecycle.yml
+  rate_limits: rate-limits/flockjay-rate-limits.yml

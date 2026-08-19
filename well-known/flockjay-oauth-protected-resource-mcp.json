@@ -1,0 +1,1 @@
+{"resource": "https://api.flockjay.com/mcp", "authorization_servers": ["https://api.flockjay.com"], "scopes_supported": ["read", "offline_access"], "bearer_methods_supported": ["header"]}

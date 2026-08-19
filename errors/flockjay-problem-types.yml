@@ -1,0 +1,157 @@
+generated: '2026-08-14'
+method: probed
+source: >-
+  Error responses observed on live unauthenticated requests to
+  https://api.flockjay.com/ on 2026-08-14. No OpenAPI exists to derive from and
+  Flockjay publishes no error reference, so every entry below is an observed
+  response, not a documented one.
+name: Flockjay error catalog
+description: >-
+  Flockjay returns the stock Django REST Framework error envelope — a single
+  {"detail": "..."} string — with no machine-readable error code, no type URI and
+  no field-level detail. RFC 9457 problem+json is not used. A notable inconsistency:
+  the API host serves an HTML 404 body for unrouted paths while serving JSON for
+  every other error, so a client must branch on content-type rather than status.
+
+format: bespoke
+rfc9457: false
+content_type: application/json
+envelope:
+  detail: string
+
+problem_types:
+- status: 401
+  code: null
+  title: Authentication required (Flockjay token variant)
+  body: '{"detail":"Basic token authentication required."}'
+  content_type: application/json
+  meaning: >-
+    The endpoint requires a Flockjay-issued token. Despite the wording, this is not
+    HTTP Basic auth — it is DRF token authentication via the Authorization header.
+  remediation: >-
+    Send Authorization: Token <token>. For the MCP surface use the OAuth 2.1 bearer
+    path instead.
+  observed_on:
+  - GET /api/users/
+  - GET /api/events/
+  - GET /api/assignment_submissions/
+  - GET /api/v2/user/
+  - GET /api/v2/learning-content/
+  - GET /api/v2/search/
+  - GET /api/v2/sharedcontent/
+  - GET /api/v2/event/
+  - GET /api/v2/task/
+  - GET /api/v2/user_certificate/
+  - GET /api/v2/assignment-submission/
+
+- status: 401
+  code: null
+  title: Authentication required (stock DRF variant)
+  body: '{"detail":"Authentication credentials were not provided."}'
+  content_type: application/json
+  meaning: Same condition as above, different message from a different DRF permission class.
+  remediation: 'Send Authorization: Token <token>.'
+  observed_on:
+  - GET /api/questions/
+  - GET /api/groups/
+  - GET /api/module/
+  - GET /api/submodule/
+  - GET /api/rubrics/
+  - GET /api/assignments/
+  - GET /api/live_sessions/
+  note: >-
+    Two different bodies for the same condition on sibling collections of the same
+    API. A client cannot match on the message string.
+
+- status: 401
+  code: null
+  title: MCP unauthorized
+  body: >-
+    {"jsonrpc": "2.0", "result": {"content": [{"type": "text", "text": "Unauthorized:
+    Basic token authentication required. (WWW-Authenticate: Bearer ...)"}],
+    "isError": true}, "id": 1}
+  content_type: application/json
+  meaning: >-
+    The MCP endpoint rejects the JSON-RPC call and returns the failure INSIDE a
+    JSON-RPC result envelope with isError true, alongside the HTTP 401.
+  remediation: >-
+    Complete the OAuth 2.1 authorization-code + PKCE flow advertised at
+    /.well-known/oauth-protected-resource/mcp and retry with a bearer token.
+  observed_on:
+  - POST /mcp
+  headers:
+    www-authenticate: >-
+      Bearer realm="api",
+      resource_metadata="https://api.flockjay.com/.well-known/oauth-protected-resource/mcp",
+      scope="read"
+  note: >-
+    Correctly carries the RFC 9728 resource_metadata challenge, which is what lets an
+    MCP client self-discover the authorization server. Returning it as result rather
+    than as a JSON-RPC `error` object is a deviation from JSON-RPC 2.0.
+
+- status: 403
+  code: null
+  title: Forbidden
+  body: '{"detail":"Basic token authentication required."}'
+  content_type: application/json
+  meaning: >-
+    Same message as the 401 but a different status. Observed on the progress
+    collection only.
+  remediation: Authenticate; the distinction between 401 and 403 here is not documented.
+  observed_on:
+  - GET /api/v2/progress/
+  - OPTIONS /api/v2/progress/
+
+- status: 404
+  code: null
+  title: Not Found
+  body: >-
+    HTML document: <h1>Not Found</h1><p>The requested resource was not found on this
+    server.</p>
+  content_type: text/html; charset=utf-8
+  meaning: Unrouted path on the API host.
+  remediation: Check the collection name against GET https://api.flockjay.com/api/.
+  observed_on:
+  - GET /
+  - GET /openapi.json
+  - GET /api/schema/
+  - GET /graphql
+  - GET /.well-known/security.txt
+  note: >-
+    An API host that answers JSON everywhere else returns HTML on 404. A JSON client
+    that parses unconditionally will throw on the parse rather than see the status.
+
+- status: 405
+  code: null
+  title: Method Not Allowed
+  body: '{"detail":"Method \"GET\" not allowed."}'
+  content_type: application/json
+  meaning: The method is not in the Allow header for that route.
+  remediation: Read the Allow response header, which is populated correctly on every route.
+  observed_on:
+  - GET /oauth/register/
+
+- status: 403
+  code: null
+  title: Admin forbidden
+  content_type: text/html
+  meaning: The Django admin at /admin/ is reachable but refuses unauthenticated access.
+  remediation: Not a public API surface.
+  observed_on:
+  - GET /admin/
+
+findings:
+- >-
+  No error code vocabulary exists. Every failure is a status code plus an English
+  sentence, so client-side error handling can only branch on HTTP status.
+- >-
+  The same condition (missing credentials) produces three different bodies and two
+  different status codes across the surface.
+- >-
+  Adopting RFC 9457 application/problem+json with a stable `type` per condition would
+  be the single highest-value change to this API's machine-readability.
+
+related:
+  conventions: conventions/flockjay-conventions.yml
+  authentication: authentication/flockjay-authentication.yml
+  mcp: mcp/flockjay-mcp.yml

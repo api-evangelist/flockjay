@@ -1,0 +1,55 @@
+generated: '2026-08-14'
+method: probed
+source: >-
+  https://api.flockjay.com/.well-known/oauth-authorization-server and
+  https://api.flockjay.com/.well-known/oauth-protected-resource (fetched 2026-08-14)
+name: Flockjay OAuth scopes
+description: >-
+  Flockjay's authorization server advertises exactly two scopes. There is no scopes
+  or permissions reference page anywhere on flockjay.com — these are read from the
+  server's own RFC 8414 metadata, which is the only place they are published.
+docs: null
+docs_note: >-
+  No public scopes/permissions documentation exists. The authoritative list is the
+  machine-readable metadata document itself.
+
+authorization_server: https://api.flockjay.com
+protected_resource: https://api.flockjay.com/mcp
+
+scopes:
+- name: read
+  description: >-
+    Read access to the caller's Flockjay enablement data. Required by the MCP
+    server — the WWW-Authenticate challenge on POST /mcp names scope="read"
+    explicitly.
+  required_by:
+  - https://api.flockjay.com/mcp
+  source: oauth-authorization-server metadata + WWW-Authenticate challenge
+- name: offline_access
+  description: >-
+    Issues a refresh token so an agent can keep calling after the access token
+    expires. Backed by grant_types_supported including refresh_token.
+  source: oauth-authorization-server metadata
+
+scope_count: 2
+
+findings:
+- >-
+  The scope model is read-only. No write, admin, or resource-specific scope is
+  advertised, so an OAuth client — including the MCP server — cannot mutate
+  enablement data through this path. That is a deliberate and defensible posture
+  for an agent surface, and worth saying plainly.
+- >-
+  Scopes are coarse. There is no per-resource decomposition (no courses:read,
+  no scorecards:read), so a customer granting an AI assistant access grants it
+  everything readable at once. There is no way to consent to less.
+- >-
+  Because token_endpoint_auth_methods_supported is ["none"] and registration is
+  dynamic, any client can register and request these scopes; the control point is
+  the user's authorization decision at https://flockjay.com/oauth/authorize, not
+  client vetting.
+
+related:
+  authentication: authentication/flockjay-authentication.yml
+  mcp: mcp/flockjay-mcp.yml
+  well_known: well-known/flockjay-well-known.yml

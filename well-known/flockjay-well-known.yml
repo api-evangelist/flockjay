@@ -1,0 +1,124 @@
+generated: '2026-08-14'
+method: probed
+source: >-
+  Live unauthenticated GET probes of /.well-known/* on both Flockjay hosts
+  (https://flockjay.com and https://api.flockjay.com) on 2026-08-14.
+name: Flockjay well-known probe
+description: >-
+  api.flockjay.com serves a real OAuth 2.0 / OpenID Connect discovery surface:
+  RFC 8414 authorization server metadata, an OpenID Connect discovery document,
+  and RFC 9728 protected resource metadata that names the Flockjay MCP server as
+  the protected resource. The marketing host flockjay.com serves NO well-known
+  documents — every /.well-known/* path there returns HTTP 200 with the 2,197-byte
+  React SPA shell, which is a soft-404, not a document.
+
+hosts:
+- host: api.flockjay.com
+  note: Django/nginx API host. Real documents served here.
+  paths:
+  - path: /.well-known/openid-configuration
+    status: 200
+    content_type: application/json
+    document: true
+    file: flockjay-openid-configuration.json
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    document: true
+    file: flockjay-oauth-authorization-server.json
+    note: Byte-identical to the openid-configuration document.
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: application/json
+    document: true
+    file: flockjay-oauth-protected-resource.json
+    note: RFC 9728. Names https://api.flockjay.com/mcp as the protected resource.
+  - path: /.well-known/oauth-protected-resource/mcp
+    status: 200
+    content_type: application/json
+    document: true
+    file: flockjay-oauth-protected-resource-mcp.json
+    note: >-
+      The exact URL advertised in the WWW-Authenticate challenge returned by
+      POST https://api.flockjay.com/mcp. Body identical to the unsuffixed path.
+  - path: /oauth/.well-known/jwks.json
+    status: 200
+    content_type: application/json
+    document: true
+    file: flockjay-jwks.json
+    note: >-
+      Non-standard location — advertised as jwks_uri by the discovery document,
+      not served at /.well-known/jwks.json.
+  - path: /.well-known/security.txt
+    status: 404
+    document: false
+  - path: /.well-known/api-catalog
+    status: 404
+    document: false
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    document: false
+  - path: /.well-known/agent-card.json
+    status: 404
+    document: false
+  - path: /.well-known/agent.json
+    status: 404
+    document: false
+
+- host: flockjay.com
+  note: >-
+    Framer marketing site plus a React single-page app. Unrouted paths answer
+    HTTP 200 with an identical 2,197-byte HTML shell. Every 200 below is that
+    shell — a soft-404, recorded as a MISS. Only /.well-known/security.txt
+    returns an honest 404.
+  paths:
+  - path: /.well-known/security.txt
+    status: 404
+    document: false
+  - path: /security.txt
+    status: 404
+    document: false
+  - path: /.well-known/openid-configuration
+    status: 200
+    content_type: text/html
+    document: false
+    note: 2197-byte SPA shell, not a document.
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: text/html
+    document: false
+    note: 2197-byte SPA shell, not a document.
+  - path: /.well-known/api-catalog
+    status: 200
+    content_type: text/html
+    document: false
+    note: 2197-byte SPA shell, not a document.
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    content_type: text/html
+    document: false
+    note: 2197-byte SPA shell, not a document.
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: text/html
+    document: false
+    note: 2197-byte SPA shell, not a document. NOT an A2A agent card.
+  - path: /.well-known/agent.json
+    status: 200
+    content_type: text/html
+    document: false
+    note: 2197-byte SPA shell, not a document. NOT an A2A agent card.
+  - path: /.well-known/mcp.json
+    status: 200
+    content_type: text/html
+    document: false
+    note: 2197-byte SPA shell, not a document.
+
+summary:
+  documents_found: 5
+  hosts_probed: 2
+  security_txt: false
+  agent_card: false
+  api_catalog: false
+  ai_plugin: false
+  oauth_metadata: true

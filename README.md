@@ -42,6 +42,24 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Flockjay is a company surfaced as a portfolio company of lightspeed-venture-partners and added to the API Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+Flockjay is a sales enablement platform (LMS + sales content management + AI coaching), first
+surfaced as a portfolio company of Lightspeed Venture Partners.
+
+**This profile was previously recorded as having no developer API. That was wrong, and it has been
+corrected.** A 2026-08-14 enrichment pass found two live API surfaces that Flockjay does not
+document anywhere:
+
+- **`https://api.flockjay.com/api/`** — a Django REST Framework API whose root is anonymously
+  readable and enumerates 20 collections across two version trees. Every collection requires a
+  Flockjay-issued token. There is no OpenAPI, no reference, and no developer portal.
+- **`https://api.flockjay.com/mcp`** — a hosted Model Context Protocol server, announced on
+  [Flockjay's own blog](https://flockjay.com/resources/blog/ai-enablement-mcp-server), protected by
+  OAuth 2.1 authorization-code + PKCE with RFC 9728 protected-resource metadata and RFC 7591
+  dynamic client registration. Anonymous `tools/list` returns HTTP 401, so the tool list is not
+  public.
+
+The authorization layer is genuinely standards-based and correctly cross-linked. The REST API
+beneath it publishes no contract, no error vocabulary, no idempotency, no rate-limit signal and no
+deprecation policy. See `conformance/`, `conventions/` and `mcp/` for the evidence.
 
 Backed by: lightspeed-venture-partners

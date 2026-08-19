@@ -1,0 +1,188 @@
+generated: '2026-08-14'
+method: probed
+source: >-
+  Live probes of https://api.flockjay.com (OAuth/OIDC discovery, MCP endpoint, DRF
+  collections) and reads of https://flockjay.com/product/security,
+  https://flockjay.com/product/trust-center and
+  https://flockjay.com/resources/support on 2026-08-14.
+name: Flockjay standards conformance
+description: >-
+  What Flockjay actually implements against cross-cutting standards. The picture is
+  lopsided: the authorization and agent-protocol layer is genuinely standards-based
+  and correctly wired, while the REST layer below it publishes no contract at all.
+
+standards:
+- id: oauth2
+  name: OAuth 2.0 / 2.1 authorization code with PKCE
+  conforms: true
+  evidence: >-
+    /.well-known/oauth-authorization-server returns 200 with authorization_endpoint,
+    token_endpoint, revocation_endpoint, registration_endpoint, jwks_uri,
+    grant_types_supported [authorization_code, refresh_token],
+    code_challenge_methods_supported [S256], token_endpoint_auth_methods_supported
+    [none].
+  note: Public-client profile. PKCE S256 only, which is the OAuth 2.1 requirement.
+
+- id: rfc8414
+  name: OAuth 2.0 Authorization Server Metadata
+  conforms: true
+  evidence: >-
+    GET https://api.flockjay.com/.well-known/oauth-authorization-server -> 200
+    application/json with a well-formed metadata document whose issuer matches the host.
+
+- id: rfc9728
+  name: OAuth 2.0 Protected Resource Metadata
+  conforms: true
+  evidence: >-
+    GET https://api.flockjay.com/.well-known/oauth-protected-resource -> 200 naming
+    resource https://api.flockjay.com/mcp and authorization_servers
+    [https://api.flockjay.com]; the 401 from POST /mcp carries a WWW-Authenticate
+    header with a matching resource_metadata parameter.
+  note: >-
+    Correctly implemented end to end — the challenge points at the metadata, the
+    metadata points at the authorization server, the authorization server advertises
+    registration. An MCP client can bootstrap with zero human configuration.
+
+- id: rfc7591
+  name: OAuth 2.0 Dynamic Client Registration
+  conforms: true
+  evidence: >-
+    registration_endpoint https://api.flockjay.com/oauth/register/ advertised in the
+    metadata; GET returns 405 Method Not Allowed (POST-only), confirming the route
+    is live.
+
+- id: rfc7517
+  name: JSON Web Key Set
+  conforms: true
+  evidence: >-
+    GET https://api.flockjay.com/oauth/.well-known/jwks.json -> 200 with one RS256
+    signing key (kty RSA, use sig, kid present).
+  deviation: >-
+    Served under /oauth/.well-known/ rather than the host-root /.well-known/. Legal,
+    since jwks_uri is explicit, but non-obvious.
+
+- id: oidc
+  name: OpenID Connect Discovery / Core
+  conforms: false
+  evidence: >-
+    /.well-known/openid-configuration returns 200 and advertises
+    id_token_signing_alg_values_supported [RS256] and subject_types_supported
+    [public], but scopes_supported is ["read","offline_access"] — no `openid` scope —
+    and no userinfo_endpoint or end_session_endpoint is advertised.
+  note: >-
+    OIDC-shaped metadata without an OIDC contract. A relying party cannot request an
+    ID token because it cannot request the openid scope. Recorded as non-conformant
+    rather than partial, because the mandatory scope is absent.
+
+- id: mcp
+  name: Model Context Protocol
+  conforms: true
+  evidence: >-
+    POST https://api.flockjay.com/mcp with a JSON-RPC 2.0 tools/list body returns a
+    JSON-RPC-shaped response and an RFC 9728 authorization challenge. Announced by the
+    provider at https://flockjay.com/resources/blog/ai-enablement-mcp-server.
+  deviation: >-
+    The unauthorized response is returned as a JSON-RPC `result` with isError true
+    rather than as a JSON-RPC `error` object.
+  note: Tool schemas not verifiable — every method is OAuth-gated.
+
+- id: a2a
+  name: A2A Agent Card
+  conforms: false
+  evidence: >-
+    /.well-known/agent-card.json and /.well-known/agent.json return 404 on
+    api.flockjay.com. On flockjay.com both return HTTP 200 but the body is the
+    2,197-byte React SPA shell served for every unrouted path — a soft-404, not a card.
+
+- id: openapi
+  name: OpenAPI / Swagger
+  conforms: false
+  evidence: >-
+    404 on api.flockjay.com for /openapi.json, /openapi.yaml, /swagger.json,
+    /swagger.yaml, /api-docs, /docs, /redoc, /schema/, /api/schema/, /api/docs/,
+    /v1/openapi.json, /api/v2/openapi.json. SPA shell (200, non-document) on
+    flockjay.com for /openapi.json and /swagger.json.
+
+- id: graphql
+  name: GraphQL
+  conforms: false
+  evidence: GET/POST https://api.flockjay.com/graphql -> 404.
+
+- id: rfc9457
+  name: Problem Details for HTTP APIs
+  conforms: false
+  evidence: >-
+    Errors are the DRF {"detail": "..."} envelope with content-type application/json.
+    No application/problem+json response was observed anywhere.
+
+- id: rfc9116
+  name: security.txt
+  conforms: false
+  evidence: >-
+    404 on flockjay.com/.well-known/security.txt, flockjay.com/security.txt and
+    api.flockjay.com/.well-known/security.txt.
+  note: >-
+    A security contact IS published — security@flockjay.com on
+    https://flockjay.com/product/security — just not at the RFC 9116 location.
+
+- id: rfc8594
+  name: Sunset header / deprecation signalling
+  conforms: false
+  evidence: >-
+    No Sunset or Deprecation header on any observed response, and no deprecation
+    policy page. The v1 tree coexists with v2 with nothing marking it superseded.
+
+- id: idempotency
+  name: Idempotency keys for unsafe methods
+  conforms: false
+  evidence: No Idempotency-Key header accepted or documented on any POST collection.
+
+- id: pagination
+  name: Consistent collection pagination
+  conforms: true
+  evidence: >-
+    DRF page-number pagination with a {"count","next","previous","results"} envelope,
+    observed on GET https://api.flockjay.com/api/course/.
+
+- id: rate-limit-headers
+  name: RateLimit header fields (draft-ietf-httpapi-ratelimit-headers)
+  conforms: false
+  evidence: No RateLimit-*, X-RateLimit-* or Retry-After header on any observed response.
+
+- id: hsts
+  name: HTTP Strict Transport Security
+  conforms: true
+  evidence: >-
+    strict-transport-security max-age=31536000; includeSubDomains on both
+    flockjay.com and api.flockjay.com.
+
+- id: soc2
+  name: SOC 2
+  conforms: unknown
+  evidence: >-
+    https://flockjay.com/product/security lists an information security program with
+    third-party audits and third-party penetration testing, and
+    https://flockjay.com/product/trust-center has a "What compliance standards does
+    Flockjay meet?" question — but the answer is not rendered in the served HTML and
+    the Comprehensive Security Overview is behind a lead-capture form. No
+    certification is named on any public page.
+  note: >-
+    Deliberately recorded as unknown, not as conformant. No named certification was
+    found, so no Compliance pointer is emitted for this provider.
+
+summary:
+  conformant: 8
+  non_conformant: 9
+  unknown: 1
+  headline: >-
+    Flockjay's OAuth 2.1 + RFC 8414 + RFC 9728 + RFC 7591 chain is complete and
+    correctly cross-linked, which is better authorization plumbing than most of the
+    catalog ships. Directly beneath it sits a REST API with no published contract, no
+    error vocabulary, no idempotency and no deprecation signal. The agent door is
+    standards-compliant; the room behind it is undocumented.
+
+related:
+  authentication: authentication/flockjay-authentication.yml
+  well_known: well-known/flockjay-well-known.yml
+  mcp: mcp/flockjay-mcp.yml
+  errors: errors/flockjay-problem-types.yml

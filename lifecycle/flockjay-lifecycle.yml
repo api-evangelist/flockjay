@@ -1,0 +1,104 @@
+generated: '2026-08-14'
+method: searched
+source: >-
+  https://flockjay.com/resources/support (published support SLA),
+  https://flockjay.com/resources/blog, and live probes of
+  https://api.flockjay.com/api/ and status.flockjay.com on 2026-08-14.
+name: Flockjay lifecycle
+description: >-
+  Flockjay publishes a support SLA with response commitments, but nothing else in the
+  lifecycle family: no API versioning policy, no deprecation policy, no Sunset
+  headers, no status page and no changelog. The v1 and v2 API trees run side by side
+  with nothing indicating which one a new integration should target.
+
+versioning:
+  policy_published: false
+  scheme: path-segment
+  versions_live:
+  - id: v1
+    prefix: /api/
+    collections: 11
+    deprecated: unknown
+  - id: v2
+    prefix: /api/v2/
+    collections: 9
+    deprecated: false
+  evidence: GET https://api.flockjay.com/api/ -> 200, listing both trees
+  finding: >-
+    Four resources are duplicated across the two trees (events/event, users/user,
+    assignment_submissions/assignment-submission, and course/learning-content by
+    function). Nothing marks v1 superseded, so an integrator has no signal about which
+    surface will survive.
+
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  evidence: >-
+    No Sunset or Deprecation response header observed on any probed endpoint; no
+    deprecation or API-policy page exists on flockjay.com (its sitemap contains 158
+    URLs and none is a developer or policy page).
+  deprecated_operations: []
+  deprecated_operations_note: >-
+    Cannot be derived — there is no OpenAPI, and DRF exposes no deprecation metadata.
+
+status_page:
+  published: false
+  probed:
+  - {url: 'https://status.flockjay.com/', result: DNS does not resolve}
+  note: >-
+    No hosted status page (no Statuspage, Instatus, Better Stack or equivalent) was
+    found. Outage communication runs through the support channels below instead.
+
+changelog:
+  published: false
+  note: >-
+    No product or API changelog. Feature announcements are published as blog posts
+    on https://flockjay.com/resources/blog (recent examples: the MCP server launch,
+    AI Roleplay launch), which is a marketing feed, not a dated changelog.
+
+sla:
+  published: true
+  url: https://flockjay.com/resources/support
+  scope: support response times, not API uptime
+  commitments:
+  - channel: Email
+    address: support@flockjay.com
+    response: 24 hours
+  - channel: Phone
+    number: '(510) 462-2821'
+    response: 24/7, critical outages only
+  - channel: Slack / Microsoft Teams shared channel
+    audience: admins
+    response: 24 hours
+  - channel: Customer Success Manager
+    audience: admins
+    response: direct ongoing access
+  uptime_commitment: null
+  uptime_note: >-
+    The document is explicitly a support-response SLA. No availability percentage,
+    no credits, no maintenance-window policy is published.
+
+support:
+  url: https://flockjay.com/resources/support
+  email: support@flockjay.com
+  general_email: hello@flockjay.com
+  security_email: security@flockjay.com
+  user_guide: >-
+    In-product only — "The Flockjay user guide is built directly into the platform".
+    There is no public help center, so troubleshooting content is not reachable
+    without a tenant.
+
+findings:
+- >-
+  The support SLA is real, specific and published — genuinely better than the median
+  provider at this size. It is also the ONLY lifecycle commitment Flockjay makes.
+- >-
+  A hosted MCP server was launched with no versioning policy, no changelog and no
+  status page behind it. An agent integration has no way to learn that the surface
+  changed.
+
+related:
+  conventions: conventions/flockjay-conventions.yml
+  conformance: conformance/flockjay-conformance.yml

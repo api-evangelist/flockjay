@@ -1,0 +1,221 @@
+generated: '2026-08-14'
+method: derived
+source: >-
+  Derived from the collection map returned by GET https://api.flockjay.com/api/
+  (HTTP 200, 2026-08-14), the DRF OPTIONS metadata at
+  json-schema/flockjay-events-options-metadata.json, and the anonymous
+  /api/v2/sharedcontent/{linkId}/ response shape. No OpenAPI exists to derive from.
+name: Flockjay data model
+description: >-
+  Entity graph of the Flockjay REST API as far as it can be established without
+  credentials. The 20 collections are real and enumerated by the provider's own API
+  root; the field-level detail is real ONLY for Event, whose OPTIONS metadata is
+  anonymously readable. Everything else is auth-gated, so relationships are inferred
+  from resource naming and the product's own description of itself and are marked
+  with honest confidence.
+
+confidence: medium
+confidence_note: >-
+  Entity list: high (published by the provider's API root). Field schemas: high for
+  Event, absent elsewhere. Relationships: low-to-medium, inferred from naming and
+  product documentation, NOT read from a schema.
+
+id_convention:
+  style: mixed
+  observed:
+  - entity: Event
+    id_type: integer
+    source: >-
+      OPTIONS /api/events/ — "id": {"type": "integer", "read_only": true}
+  - entity: SharedContent
+    id_type: opaque lowercase hex-ish string
+    example_shape: 14-character alphanumeric
+    source: /api/v2/sharedcontent/{linkId}/
+  note: >-
+    v1 uses integer primary keys, v2 uses opaque string ids. No id prefixes
+    (no `usr_`, `crs_`), so an id is not self-describing.
+
+entities:
+- name: Event
+  collection: /api/events/
+  also_at: /api/v2/event/
+  methods: [GET, POST, HEAD, OPTIONS]
+  anonymous_options: true
+  fields:
+  - {name: id, type: integer, read_only: true}
+  - {name: event_type, type: choice, required: true, enum_count: 24}
+  - {name: user, type: field}
+  - {name: data, type: field, note: free-form payload bag}
+  - {name: created_at, type: datetime, read_only: true}
+  - {name: last_updated, type: datetime, read_only: true}
+  event_types:
+  - login
+  - post_viewed
+  - gong_viewed
+  - asset_viewed
+  - deal_room_viewed
+  - page_viewed
+  - audio_listened
+  - video_watched
+  - asset_download
+  - ai_suggestion
+  - ai_hallucinate
+  - search
+  - background_csv_export
+  - cookie_consent_response
+  - ai_grading_feedback
+  - ai_summary_feedback
+  - assignment_submission
+  - slack_teams_chat
+  - candidate_profile_view
+  - application_completed
+  - company_profile_view
+  - tf_referral_email
+  - application_video_completed
+  - application_started
+  note: >-
+    Client-to-server telemetry ingest, NOT a webhook or subscribable event stream —
+    there is no delivery surface, so this is not an AsyncAPI event surface. The
+    vocabulary is archaeologically interesting: `ai_hallucinate`, `ai_grading_feedback`
+    and `ai_summary_feedback` are first-class instrumented events, and
+    `candidate_profile_view` / `application_started` / `tf_referral_email` are
+    leftovers from Flockjay's original tech-sales bootcamp product ("tf" = tech fellow).
+
+- name: User
+  collection: /api/users/
+  also_at: /api/v2/user/
+  methods: [GET, POST, HEAD, OPTIONS]
+  anonymous_options: false
+
+- name: Group
+  collection: /api/groups/
+  methods: [GET, POST, HEAD, OPTIONS]
+  anonymous_options: false
+
+- name: Course
+  collection: /api/course/
+  methods: [GET, POST, HEAD, OPTIONS]
+  anonymous_options: partial
+  note: >-
+    GET returns a paginated envelope anonymously but OPTIONS carries no actions block,
+    so no field schema is readable.
+
+- name: Module
+  collection: /api/module/
+  methods: [POST, OPTIONS]
+  anonymous_options: false
+  note: Allow header advertises POST and OPTIONS only — no GET on the collection.
+
+- name: SubModule
+  collection: /api/submodule/
+  methods: [GET, POST, HEAD, OPTIONS]
+  anonymous_options: false
+
+- name: Assignment
+  collection: /api/assignments/
+  methods: [GET, POST, HEAD, OPTIONS]
+  anonymous_options: false
+
+- name: AssignmentSubmission
+  collection: /api/assignment_submissions/
+  also_at: /api/v2/assignment-submission/
+  methods: [GET, POST, HEAD, OPTIONS]
+  anonymous_options: false
+
+- name: Rubric
+  collection: /api/rubrics/
+  methods: [GET, POST, HEAD, OPTIONS]
+  anonymous_options: false
+
+- name: Question
+  collection: /api/questions/
+  methods: [GET, POST, HEAD, OPTIONS]
+  anonymous_options: false
+
+- name: LiveSession
+  collection: /api/live_sessions/
+  methods: [POST, OPTIONS]
+  anonymous_options: false
+  note: Write-only collection per the Allow header.
+
+- name: LearningContent
+  collection: /api/v2/learning-content/
+  methods: [GET, HEAD, OPTIONS]
+  anonymous_options: false
+  note: Read-only.
+
+- name: Progress
+  collection: /api/v2/progress/
+  methods: [GET, HEAD, OPTIONS]
+  anonymous_options: false
+  note: Read-only. Returns 403 rather than 401 when unauthenticated.
+
+- name: SharedContent
+  collection: /api/v2/sharedcontent/
+  methods: [GET, POST, HEAD, OPTIONS]
+  anonymous_options: false
+  public_item_reads: true
+  note: >-
+    The collection is gated but individual items resolve anonymously by link id —
+    this is the public share-link product feature. Flockjay's own Trust Center page
+    serves its security PDF through one of these links.
+  observed_fields:
+  - id
+  - title
+  - author (nested object)
+  fields_note: >-
+    Field names only. The observed payload embeds a named individual, so no example
+    body is stored in this repo.
+
+- name: Task
+  collection: /api/v2/task/
+  methods: [GET, HEAD, OPTIONS]
+  anonymous_options: false
+  note: Read-only.
+
+- name: UserCertificate
+  collection: /api/v2/user_certificate/
+  methods: [GET, HEAD, OPTIONS]
+  anonymous_options: false
+  note: Read-only.
+
+- name: Search
+  collection: /api/v2/search/
+  methods: [GET, HEAD, OPTIONS]
+  anonymous_options: false
+  note: >-
+    Not an entity — a query surface. Flockjay markets semantic search across sales
+    content, so this is likely the backing endpoint.
+
+relationships:
+- {from: Course, to: Module, type: has_many, via: inferred, confidence: medium, note: LMS course/module/submodule hierarchy named by the collections themselves}
+- {from: Module, to: SubModule, type: has_many, via: inferred, confidence: medium}
+- {from: Assignment, to: AssignmentSubmission, type: has_many, via: inferred, confidence: medium}
+- {from: AssignmentSubmission, to: User, type: belongs_to, via: inferred, confidence: medium}
+- {from: AssignmentSubmission, to: Rubric, type: has_one, via: inferred, confidence: low, note: Rubrics grade submissions in the product; the link field is not observable}
+- {from: Event, to: User, type: belongs_to, via: user, confidence: high, note: field present in OPTIONS metadata}
+- {from: Progress, to: User, type: belongs_to, via: inferred, confidence: medium}
+- {from: Progress, to: LearningContent, type: belongs_to, via: inferred, confidence: medium}
+- {from: UserCertificate, to: User, type: belongs_to, via: inferred, confidence: medium}
+- {from: SharedContent, to: User, type: belongs_to, via: author, confidence: high, note: author object observed in the anonymous item response}
+- {from: Group, to: User, type: has_many, via: inferred, confidence: medium}
+- {from: LiveSession, to: Course, type: belongs_to, via: inferred, confidence: low}
+
+counts:
+  entities: 17
+  collections_published: 20
+  entities_with_readable_field_schema: 1
+
+gaps:
+- No OpenAPI, no JSON Schema, no GraphQL SDL is published.
+- >-
+  16 of 17 entities have no publicly readable field schema — OPTIONS is itself
+  authenticated on every collection except events and course.
+- >-
+  Relationship fields cannot be confirmed. Anything marked confidence low or medium
+  above is an inference from naming and product documentation and should not be
+  treated as a contract.
+
+related:
+  conventions: conventions/flockjay-conventions.yml
+  json_schema: json-schema/flockjay-events-options-metadata.json

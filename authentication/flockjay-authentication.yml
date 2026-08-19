@@ -1,0 +1,133 @@
+generated: '2026-08-14'
+method: probed
+source: >-
+  https://api.flockjay.com/.well-known/openid-configuration,
+  https://api.flockjay.com/.well-known/oauth-protected-resource, and live
+  unauthenticated probes of the Django REST Framework collections under
+  https://api.flockjay.com/api/ on 2026-08-14.
+name: Flockjay authentication profile
+description: >-
+  Flockjay runs two authentication paths against one API host. Human/first-party
+  clients use a DRF token ("Basic token authentication required" is the literal
+  401 body). Agents and third-party clients use OAuth 2.1 authorization-code +
+  PKCE against api.flockjay.com, with dynamic client registration — this is the
+  path the MCP server requires. There is no published developer portal, no key
+  self-service page, and no OpenAPI securitySchemes block to derive from; every
+  fact below was observed on the wire.
+
+schemes:
+- id: drf-token
+  type: http
+  scheme: token
+  in: header
+  header: Authorization
+  format: 'Token <token>'
+  applies_to: https://api.flockjay.com/api/
+  issuance: >-
+    Not self-service. No public signup or key page was found; tokens appear to be
+    issued to a provisioned Flockjay tenant.
+  evidence:
+    url: https://api.flockjay.com/api/users/
+    http_status: 401
+    body: '{"detail":"Basic token authentication required."}'
+  observed_variants:
+  - body: '{"detail":"Basic token authentication required."}'
+    seen_on:
+    - /api/users/
+    - /api/events/
+    - /api/assignment_submissions/
+    - /api/v2/user/
+    - /api/v2/learning-content/
+    - /api/v2/search/
+    - /api/v2/sharedcontent/
+    - /api/v2/event/
+    - /api/v2/task/
+    - /api/v2/user_certificate/
+    - /api/v2/assignment-submission/
+  - body: '{"detail":"Authentication credentials were not provided."}'
+    seen_on:
+    - /api/questions/
+    - /api/groups/
+    - /api/module/
+    - /api/submodule/
+    - /api/rubrics/
+    - /api/assignments/
+    - /api/live_sessions/
+    note: >-
+      Stock DRF message. Two different 401 bodies across sibling collections means
+      the v1 surface mixes at least two permission/authentication classes.
+
+- id: oauth2-authorization-code
+  type: oauth2
+  flow: authorizationCode
+  pkce: S256
+  pkce_required: true
+  authorization_endpoint: https://flockjay.com/oauth/authorize
+  token_endpoint: https://api.flockjay.com/oauth/token/
+  revocation_endpoint: https://api.flockjay.com/oauth/revoke/
+  registration_endpoint: https://api.flockjay.com/oauth/register/
+  jwks_uri: https://api.flockjay.com/oauth/.well-known/jwks.json
+  issuer: https://api.flockjay.com
+  grant_types:
+  - authorization_code
+  - refresh_token
+  response_types:
+  - code
+  token_endpoint_auth_methods:
+  - none
+  scopes:
+  - read
+  - offline_access
+  id_token_signing_alg:
+  - RS256
+  subject_types:
+  - public
+  applies_to: https://api.flockjay.com/mcp
+  dynamic_client_registration: true
+  dcr_spec: RFC 7591
+  evidence:
+    url: https://api.flockjay.com/.well-known/oauth-authorization-server
+    http_status: 200
+
+anonymous_surfaces:
+- path: /api/
+  http_status: 200
+  note: >-
+    Browsable DRF API root. Returns a JSON map of 20 collection URLs. The only
+    self-describing thing Flockjay publishes about its REST API.
+- path: /api/course/
+  http_status: 200
+  note: >-
+    Returns an empty paginated envelope {"count":0,...} without credentials. Reads
+    as an unauthenticated-but-tenant-scoped-to-nothing response rather than an open
+    collection.
+- path: /api/v2/sharedcontent/{linkId}/
+  http_status: 200
+  note: >-
+    Public share links resolve anonymously — this is the product feature behind
+    flockjay.com/share?linkId=..., including the link the Trust Center page uses to
+    serve its own PDF. Payload not captured here (contains named individuals).
+
+notes:
+- >-
+  token_endpoint_auth_methods_supported is ["none"], i.e. public clients only. Paired
+  with mandatory PKCE and dynamic client registration, this is a correctly-shaped
+  OAuth 2.1 public-client profile for agent use.
+- >-
+  The discovery document is served at BOTH /.well-known/openid-configuration and
+  /.well-known/oauth-authorization-server with identical bytes, but scopes_supported
+  does not include "openid" and there is no userinfo_endpoint — so it advertises
+  OIDC-shaped metadata without being a usable OIDC provider. Recorded as a deviation,
+  not as OIDC conformance.
+- >-
+  No API key scheme, no mTLS, no HMAC request signing was observed or documented.
+- >-
+  No public documentation of any of this exists. Flockjay publishes no auth guide,
+  no developer portal, and no OpenAPI. An integrator can only learn this by probing
+  the host, which is what API Evangelist did.
+
+related:
+  scopes: scopes/flockjay-scopes.yml
+  well_known: well-known/flockjay-well-known.yml
+  mcp: mcp/flockjay-mcp.yml
+  conventions: conventions/flockjay-conventions.yml

@@ -1,0 +1,98 @@
+generated: '2026-08-14'
+method: searched
+source: >-
+  Registry queries on 2026-08-14 — registry.npmjs.org search, pypi.org/pypi/flockjay/json,
+  rubygems.org/api/v1/gems/flockjay.json, crates.io/api/v1/crates?q=flockjay,
+  packagist.org — plus github.com/Flockjay and https://flockjay.com/product/integrations.
+name: Flockjay client packages
+description: >-
+  Flockjay publishes no client SDK on any package registry. The search is an honest
+  zero across npm, PyPI, RubyGems, crates.io and Packagist. The company's public
+  GitHub organization contains only forks of third-party libraries (CKEditor 5,
+  django-softdelete, django-inlinecss, python-litmos-api) and two hiring take-home
+  exercises — no first-party client library.
+
+package_count: 0
+official_sdk_count: 0
+packages: []
+
+registries_checked:
+- registry: npm
+  query: https://registry.npmjs.org/-/v1/search?text=flockjay
+  status: 200
+  result_count: 0
+  version: null
+  note: Zero packages match. No @flockjay scope exists.
+- registry: pypi
+  query: https://pypi.org/pypi/flockjay/json
+  status: 404
+  version: null
+  note: Checked, nothing published.
+- registry: rubygems
+  query: https://rubygems.org/api/v1/gems/flockjay.json
+  status: 404
+  version: null
+  note: Checked, nothing published.
+- registry: crates.io
+  query: https://crates.io/api/v1/crates?q=flockjay
+  status: 200
+  result_count: 0
+  version: null
+  note: Checked, nothing published.
+- registry: packagist
+  query: https://packagist.org/packages/flockjay/flockjay.json
+  status: 404
+  version: null
+  note: Checked, nothing published.
+- registry: maven-central
+  status: not-checked
+  version: null
+  note: No Java surface is plausible for this provider; not queried.
+
+first_party_distributables:
+- name: Flockjay for Chrome
+  kind: browser-extension
+  registry: chrome-web-store
+  url: https://chromewebstore.google.com/detail/flockjay/kkiddlfdpabfbpglngahondligkjggjf
+  official: true
+  version: null
+  published: null
+  version_note: >-
+    The Chrome Web Store publishes no unauthenticated metadata endpoint, so the
+    current version and last-updated date could not be read. Checked, nothing to record.
+  note: >-
+    An end-user browser extension, NOT a client library. Recorded here for completeness
+    and deliberately NOT counted as an SDK — no `SDKs` pointer is emitted for this
+    provider, because a Chrome extension does not let a developer call the API.
+
+marketplace_listings:
+- platform: Gong
+  url: https://integrations.gong.io/integrations/flockjay
+  note: Partner integration listing, not a package.
+- platform: Slack
+  url: https://flockjay.com/resources/slack-integration
+- platform: Microsoft Teams
+  url: https://flockjay.com/resources/teams-integration
+- platform: Zoom
+  url: https://flockjay.com/resources/zoom-guide
+- platform: Salesforce
+  note: Salesforce integration marketed on https://flockjay.com/product/integrations.
+
+github_organization:
+  url: https://github.com/Flockjay
+  first_party_libraries: 0
+  repositories_note: >-
+    Ten public repositories, all forks of third-party projects (ckeditor5,
+    ckeditor5-audio, ckeditor5-video, ckeditor5-file-upload, ckeditor,
+    django-softdelete, django-inlinecss, python-litmos-api) or interview take-homes
+    (frontend-takehome, deal-pipeline-frontend-takehome). Useful only as corroboration
+    that the backend is Django — which the API's DRF behaviour independently confirms.
+
+findings:
+- >-
+  Zero SDKs is consistent with the rest of the profile: Flockjay ships an API and an
+  MCP server but no developer program around either, so there is nothing to wrap.
+- >-
+  The MCP server partly substitutes for an SDK for agent consumers — it is the one
+  integration path that needs no client library. It does nothing for a developer
+  writing conventional code against api.flockjay.com.

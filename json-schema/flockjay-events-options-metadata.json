@@ -1,0 +1,150 @@
+{
+    "name": "Events List",
+    "description": "",
+    "renders": [
+        "application/json"
+    ],
+    "parses": [
+        "application/json",
+        "application/x-www-form-urlencoded",
+        "multipart/form-data"
+    ],
+    "actions": {
+        "POST": {
+            "id": {
+                "type": "integer",
+                "required": false,
+                "read_only": true,
+                "label": "ID"
+            },
+            "event_type": {
+                "type": "choice",
+                "required": true,
+                "read_only": false,
+                "label": "Event type",
+                "choices": [
+                    {
+                        "value": "login",
+                        "display_name": "Login"
+                    },
+                    {
+                        "value": "post_viewed",
+                        "display_name": "Post Viewed"
+                    },
+                    {
+                        "value": "gong_viewed",
+                        "display_name": "Gong Viewed"
+                    },
+                    {
+                        "value": "asset_viewed",
+                        "display_name": "Asset Viewed"
+                    },
+                    {
+                        "value": "deal_room_viewed",
+                        "display_name": "Deal Room Viewed"
+                    },
+                    {
+                        "value": "page_viewed",
+                        "display_name": "Page Viewed"
+                    },
+                    {
+                        "value": "audio_listened",
+                        "display_name": "Audio Listened"
+                    },
+                    {
+                        "value": "video_watched",
+                        "display_name": "Video Watched"
+                    },
+                    {
+                        "value": "asset_download",
+                        "display_name": "Asset Download"
+                    },
+                    {
+                        "value": "ai_suggestion",
+                        "display_name": "Ai Suggestion"
+                    },
+                    {
+                        "value": "ai_hallucinate",
+                        "display_name": "Ai Hallucinate"
+                    },
+                    {
+                        "value": "search",
+                        "display_name": "Search"
+                    },
+                    {
+                        "value": "background_csv_export",
+                        "display_name": "Background Csv Export"
+                    },
+                    {
+                        "value": "cookie_consent_response",
+                        "display_name": "Cookie Consent Response"
+                    },
+                    {
+                        "value": "ai_grading_feedback",
+                        "display_name": "Ai Grading Feedback"
+                    },
+                    {
+                        "value": "ai_summary_feedback",
+                        "display_name": "Ai Summary Feedback"
+                    },
+                    {
+                        "value": "assignment_submission",
+                        "display_name": "Assignment Submission"
+                    },
+                    {
+                        "value": "slack_teams_chat",
+                        "display_name": "Slack Teams Chat"
+                    },
+                    {
+                        "value": "candidate_profile_view",
+                        "display_name": "Candidate Profile View"
+                    },
+                    {
+                        "value": "application_completed",
+                        "display_name": "Application Completed"
+                    },
+                    {
+                        "value": "company_profile_view",
+                        "display_name": "Company Profile View"
+                    },
+                    {
+                        "value": "tf_referral_email",
+                        "display_name": "Tf Referral Email"
+                    },
+                    {
+                        "value": "application_video_completed",
+                        "display_name": "Application Video Completed"
+                    },
+                    {
+                        "value": "application_started",
+                        "display_name": "Application Started"
+                    }
+                ]
+            },
+            "user": {
+                "type": "field",
+                "required": false,
+                "read_only": false,
+                "label": "User"
+            },
+            "data": {
+                "type": "field",
+                "required": false,
+                "read_only": false,
+                "label": "Data"
+            },
+            "created_at": {
+                "type": "datetime",
+                "required": false,
+                "read_only": true,
+                "label": "Created at"
+            },
+            "last_updated": {
+                "type": "datetime",
+                "required": false,
+                "read_only": true,
+                "label": "Last updated"
+            }
+        }
+    }
+}

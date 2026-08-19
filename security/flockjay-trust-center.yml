@@ -1,0 +1,107 @@
+generated: '2026-08-14'
+method: searched
+source: >-
+  https://flockjay.com/product/trust-center and https://flockjay.com/product/security
+  (both fetched 2026-08-14, HTTP 200)
+name: Flockjay Trust Center
+description: >-
+  Flockjay operates a first-party Trust Center on its own domain covering privacy,
+  data protection, AI data handling and security. It is real and it is public — but
+  every answer is collapsed behind an accordion whose content is not in the served
+  HTML, and the supporting documents are behind a lead-capture form. No certification
+  is named anywhere on the public pages, so this profile records ZERO verified
+  certifications and emits no Compliance pointer.
+
+trust_center:
+  published: true
+  url: https://flockjay.com/product/trust-center
+  hosted: first-party
+  last_updated_on_page: '2025-06-26'
+  third_party_platform: null
+  note: >-
+    Not a Vanta/Drata/SafeBase-style hosted trust portal — a Framer page on
+    flockjay.com.
+
+security_page:
+  url: https://flockjay.com/product/security
+  last_updated_on_page: '2025-02-10'
+
+topics_covered:
+  privacy_and_data_protection:
+  - What data does the Flockjay platform collect?
+  - How does Flockjay use my data?
+  - Can Flockjay support my compliance with privacy laws?
+  - Does Flockjay share my data with other customers?
+  - Does Flockjay use AI technology?
+  - Is my data used to train AI?
+  - How long is my data stored?
+  - Who owns inputs?
+  - Does Flockjay handle personal information?
+  security:
+  - How does Flockjay ensure that my data is secure?
+  - What compliance standards does Flockjay meet?
+  note: >-
+    Question headings only. The answers are not present in the served HTML — the
+    accordion bodies are absent, so neither a human without JavaScript nor a machine
+    can read what Flockjay actually claims.
+
+certifications: []
+certifications_note: >-
+  NONE FOUND. The Trust Center asks "What compliance standards does Flockjay meet?"
+  but does not answer it in any publicly readable form, and a full-text scan of both
+  the Trust Center and Security page HTML found no occurrence of SOC 2, ISO 27001,
+  PCI DSS, HIPAA, FedRAMP or CSA STAR. The only compliance term present anywhere in
+  the markup is "CCPA". Flockjay may well hold certifications; it does not publish
+  them, and this pipeline does not credit a claim it cannot read.
+
+documents:
+- name: Comprehensive Security Overview
+  gated: true
+  gate: lead-capture form (first name, last name, email, phone, company)
+  url: https://flockjay.com/product/security
+- name: Trust Center PDF
+  gated: partially
+  url: https://flockjay.com/share?linkId=c5ef1b82ce50ed
+  note: >-
+    Served through Flockjay's own public share-link feature — the same
+    /api/v2/sharedcontent/{id}/ endpoint the product exposes to customers. Flockjay
+    dogfoods its content-sharing surface to distribute its own trust documentation.
+
+audits:
+  third_party_audits: claimed
+  penetration_testing: claimed
+  frequency: not stated
+  reports_available: on request (not stated publicly)
+  note: >-
+    "Third-Party Audits" and "Third-Party Penetration Testing" appear as control
+    headings on the security page. No auditor, scope, date or report availability is
+    published.
+
+data_residency: not published
+subprocessors: not published
+subprocessor_page: null
+
+evidence:
+- url: https://flockjay.com/product/trust-center
+  status: 200
+- url: https://flockjay.com/product/security
+  status: 200
+- url: https://flockjay.com/legal/privacy-policy
+  status: 200
+- url: https://flockjay.com/legal/terms-and-conditions
+  status: 200
+
+findings:
+- >-
+  The gap between having a Trust Center and being verifiably compliant is the whole
+  story here. Flockjay built the page, listed the right control families, and then
+  put every answer behind an accordion that does not render server-side and every
+  document behind a form.
+- >-
+  Naming its certifications in plain text on the Trust Center page would be the single
+  cheapest credibility improvement available to this company.
+
+related:
+  vulnerability_disclosure: security/flockjay-vulnerability-disclosure.yml
+  domain_security: security/flockjay-domain-security.yml
+  conformance: conformance/flockjay-conformance.yml

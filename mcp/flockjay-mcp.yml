@@ -1,0 +1,118 @@
+generated: '2026-08-14'
+method: probed
+source: >-
+  https://api.flockjay.com/mcp (live POST tools/list on 2026-08-14, HTTP 401 with
+  an RFC 9728 WWW-Authenticate challenge) plus
+  https://api.flockjay.com/.well-known/oauth-protected-resource and the provider's
+  own announcement at
+  https://flockjay.com/resources/blog/ai-enablement-mcp-server
+name: Flockjay MCP Server
+description: >-
+  Flockjay operates a first-party, hosted Model Context Protocol server that gives
+  AI assistants read access to a customer's enablement data — rep certification and
+  learning progress, coaching scorecards and call scores, and shared-content
+  performance. The provider announced it on its own blog as "a first-of-its-kind
+  capability for the enablement space". The endpoint is live and speaks JSON-RPC,
+  but every method is OAuth-protected, so the tool list could not be introspected
+  anonymously.
+status: published
+vendor: Flockjay
+
+deployment:
+  mode: remote
+  endpoint: https://api.flockjay.com/mcp
+  auth: oauth
+  verified: probed
+
+transport:
+  protocol: json-rpc-2.0
+  accept: application/json, text/event-stream
+  http_methods:
+  - POST
+
+authorization:
+  scheme: OAuth 2.1 bearer
+  challenge: >-
+    WWW-Authenticate: Bearer realm="api",
+    resource_metadata="https://api.flockjay.com/.well-known/oauth-protected-resource/mcp",
+    scope="read"
+  protected_resource_metadata: https://api.flockjay.com/.well-known/oauth-protected-resource/mcp
+  authorization_servers:
+  - https://api.flockjay.com
+  authorization_endpoint: https://flockjay.com/oauth/authorize
+  token_endpoint: https://api.flockjay.com/oauth/token/
+  registration_endpoint: https://api.flockjay.com/oauth/register/
+  dynamic_client_registration: true
+  pkce: S256
+  scopes:
+  - read
+  - offline_access
+  bearer_methods:
+  - header
+  note: >-
+    Discovery is fully conformant to the MCP authorization spec chain — the 401
+    carries resource_metadata, the protected resource metadata names the
+    authorization server, and the authorization server metadata advertises dynamic
+    client registration and PKCE. An MCP client can complete the whole handshake
+    without a human copying credentials.
+
+tools:
+  introspected: false
+  reason: >-
+    tools/list returns HTTP 401 anonymously. The live inputSchemas require an
+    authenticated OAuth token issued to a Flockjay tenant, which API Evangelist does
+    not hold. Flockjay publishes no llms.txt and no tool reference, so no tool names
+    are recorded here. They are NOT guessed.
+  capability_areas_claimed_by_provider:
+  - area: rep readiness
+    claim: >-
+      "pull a rep's certification status, learning progress, and recent call scores —
+      all in one query"
+  - area: coaching insights
+    claim: >-
+      "Surface scorecard evaluations and coaching trends across your team without
+      building a custom report"
+  - area: content performance
+    claim: >-
+      "See which shared content is actually getting opened, how prospects are
+      engaging with it, and which reps are leveraging it most effectively"
+  - area: call prep and deal review
+    claim: >-
+      "pull together call summaries, opportunity data, and rep activity into a single
+      brief"
+  - area: enablement reporting
+    claim: >-
+      "Ask AI, and it queries Flockjay in real time"
+  capability_areas_note: >-
+    These are marketing claims quoted verbatim from the announcement post, NOT tool
+    names, NOT tool schemas, and NOT verified. They are recorded as claims only.
+
+x-evidence:
+- fetched: '2026-08-14'
+  url: https://api.flockjay.com/mcp
+  method: POST
+  body: '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+  http_status: 401
+  content_type: application/json
+  response: >-
+    {"jsonrpc": "2.0", "result": {"content": [{"type": "text", "text": "Unauthorized:
+    Basic token authentication required. (WWW-Authenticate: Bearer realm=\"api\",
+    resource_metadata=\"https://api.flockjay.com/.well-known/oauth-protected-resource/mcp\",
+    scope=\"read\")"}], "isError": true}, "id": 1}
+- fetched: '2026-08-14'
+  url: https://api.flockjay.com/.well-known/oauth-protected-resource
+  http_status: 200
+  content_type: application/json
+- fetched: '2026-08-14'
+  url: https://api.flockjay.com/.well-known/oauth-authorization-server
+  http_status: 200
+  content_type: application/json
+- fetched: '2026-08-14'
+  url: https://flockjay.com/resources/blog/ai-enablement-mcp-server
+  http_status: 200
+  content_type: text/html
+
+related:
+  well_known: well-known/flockjay-well-known.yml
+  authentication: authentication/flockjay-authentication.yml
+  scopes: scopes/flockjay-scopes.yml

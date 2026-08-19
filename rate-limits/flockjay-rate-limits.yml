@@ -1,0 +1,78 @@
+generated: '2026-08-14'
+method: probed
+source: >-
+  Response headers observed on live unauthenticated requests to
+  https://api.flockjay.com/api/, /api/course/, /api/v2/sharedcontent/{id}/ and
+  /mcp on 2026-08-14, plus a search of flockjay.com (158-URL sitemap) for any
+  published limits.
+name: Flockjay rate limits
+description: >-
+  Flockjay publishes no rate limits and signals none at runtime. Not one
+  RateLimit-*, X-RateLimit-* or Retry-After header appeared on any response from the
+  API host, and there is no documentation page to read a number from. A client — and
+  especially an agent driving the MCP server — has no way to know its budget, no way
+  to see it depleting, and no machine-readable instruction for how long to wait after
+  a rejection.
+
+limit_count: 0
+documented: false
+docs: null
+
+response_headers:
+  ratelimit_limit: null
+  ratelimit_remaining: null
+  ratelimit_reset: null
+  retry_after: null
+  observed_headers:
+  - date
+  - content-type
+  - content-length
+  - server
+  - allow
+  - vary
+  - x-frame-options
+  - x-content-type-options
+  - referrer-policy
+  - cross-origin-opener-policy
+  - strict-transport-security
+  note: >-
+    The full observed header set is listed above so the absence is verifiable rather
+    than asserted.
+
+exhaustion_status: unknown
+exhaustion_note: >-
+  No 429 was induced. Probing was deliberately light — a handful of requests across
+  20 collections — because API Evangelist does not load-test third-party production
+  hosts to discover a limit the provider chose not to publish.
+
+limits: []
+
+evidence:
+- url: https://api.flockjay.com/api/
+  status: 200
+  note: No rate-limit header of any kind in the response.
+- url: https://api.flockjay.com/api/course/
+  status: 200
+  note: No rate-limit header of any kind in the response.
+- url: https://api.flockjay.com/mcp
+  status: 401
+  note: >-
+    Carries WWW-Authenticate but no Retry-After and no rate-limit header.
+- url: https://flockjay.com/sitemap.xml
+  status: 200
+  note: No developer, API, or limits documentation page exists to publish limits on.
+
+findings:
+- >-
+  An honest zero. Undocumented limits are not the same as no limits — DRF throttling
+  or an nginx/WAF limit may well be enforced upstream; it is simply invisible to a
+  client until it fires.
+- >-
+  This matters most for the MCP surface. An AI assistant that fans out queries across
+  rep progress, scorecards and content analytics has no backoff signal to obey, so its
+  only feedback will be an unexplained failure.
+
+related:
+  conventions: conventions/flockjay-conventions.yml
+  plans: plans/flockjay-plans-pricing.yml
+  mcp: mcp/flockjay-mcp.yml

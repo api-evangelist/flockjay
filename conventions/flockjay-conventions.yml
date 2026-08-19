@@ -1,0 +1,160 @@
+generated: '2026-08-14'
+method: probed
+source: >-
+  Live unauthenticated GET/HEAD/OPTIONS probes of https://api.flockjay.com/api/
+  and its 20 advertised collections on 2026-08-14. Flockjay publishes no API
+  documentation, so nothing here is quoted from a docs page — every convention was
+  observed on the wire.
+name: Flockjay API conventions
+description: >-
+  Cross-cutting runtime semantics of the Flockjay REST API. This is a stock Django
+  REST Framework surface: DRF page-number pagination, the DRF {"detail": "..."}
+  error envelope, DRF OPTIONS metadata, and path-segment versioning between an
+  unversioned v1 tree and an explicit /v2/ tree.
+
+api_style: REST
+base_url: https://api.flockjay.com/api/
+framework: Django REST Framework
+framework_evidence: >-
+  OPTIONS returns the DRF SimpleMetadata document ({"name","description","renders",
+  "parses","actions"}); 401 bodies are the stock DRF strings; nginx + Django
+  security headers (x-frame-options DENY, referrer-policy same-origin,
+  cross-origin-opener-policy same-origin, vary: origin, Cookie).
+
+authentication:
+  style: Authorization header
+  schemes:
+  - DRF token (Authorization: Token <token>) for the /api/ tree
+  - OAuth 2.1 authorization-code + PKCE bearer for /mcp
+  detail: authentication/flockjay-authentication.yml
+
+pagination:
+  style: page-number
+  envelope:
+    count: integer — total matching records
+    next: absolute URL or null
+    previous: absolute URL or null
+    results: array of records
+  params:
+    page: page number
+    page_size: observed accepted; page-size ceiling not determinable anonymously
+  observed_on: GET https://api.flockjay.com/api/course/
+  observed_body: '{"count":0,"next":null,"previous":null,"results":[]}'
+  cursor_pagination: false
+  link_header: false
+  note: >-
+    Standard DRF PageNumberPagination. Navigation is by absolute URL in next/previous,
+    so a client should follow the links rather than construct offsets.
+
+versioning:
+  style: path-segment
+  versions:
+  - id: v1
+    prefix: /api/
+    note: >-
+      Unversioned in the path. Eleven collections — events, questions, course,
+      module, submodule, assignment_submissions, assignments, live_sessions,
+      groups, rubrics, users.
+  - id: v2
+    prefix: /api/v2/
+    note: >-
+      Nine collections — user, learning-content, progress, sharedcontent, event,
+      task, user_certificate, assignment-submission, search.
+  header_versioning: false
+  media_type_versioning: false
+  findings:
+  - >-
+    v1 and v2 overlap rather than supersede: /api/events/ and /api/v2/event/ return
+    IDENTICAL OPTIONS metadata (both named "Events List", same POST field set), and
+    /api/users/ coexists with /api/v2/user/. Nothing marks the v1 tree deprecated and
+    no Sunset or Deprecation header is emitted.
+  - >-
+    Naming is inconsistent across the two trees — v1 uses snake_case plural
+    (assignment_submissions, live_sessions) while v2 uses kebab-case singular
+    (assignment-submission, user_certificate mixes both). A client cannot infer a
+    v2 path from a v1 path.
+
+error_envelope:
+  format: bespoke
+  rfc9457: false
+  content_type: application/json
+  shape:
+    detail: string — human-readable message
+  note: >-
+    Stock DRF. No error code, no type URI, no field-level errors observed on the
+    anonymous surface, and no application/problem+json anywhere.
+  detail: errors/flockjay-problem-types.yml
+
+idempotency:
+  supported: false
+  header: null
+  note: >-
+    No Idempotency-Key header, no idempotency documentation, and no idempotent-retry
+    semantics are advertised. POST collections (events, course, assignments, groups,
+    rubrics, users, sharedcontent) accept unkeyed writes, so a retried create is a
+    duplicate create. This is a real gap for agent use, not an omission in this
+    profile.
+
+rate_limiting:
+  signaled: false
+  headers_observed: []
+  note: >-
+    No X-RateLimit-*, no RateLimit-*, no Retry-After on any observed response.
+  detail: rate-limits/flockjay-rate-limits.yml
+
+request_tracing:
+  request_id_header: null
+  note: >-
+    No X-Request-Id, X-Correlation-Id, traceparent or equivalent on any observed
+    response. A client cannot cite a request identifier when contacting support.
+
+content_negotiation:
+  renders:
+  - application/json
+  parses:
+  - application/json
+  - application/x-www-form-urlencoded
+  - multipart/form-data
+  source: OPTIONS https://api.flockjay.com/api/events/
+  compression: not advertised
+
+discovery:
+  api_root: https://api.flockjay.com/api/
+  note: >-
+    GET /api/ returns a JSON map of collection name to absolute URL for all 20
+    collections. This is the only self-describing artifact Flockjay publishes about
+    its REST API — there is no OpenAPI, no /api/schema/, no /docs, no Postman
+    collection.
+  options_metadata: >-
+    OPTIONS returns DRF SimpleMetadata. On the two anonymously-reachable collections
+    it includes actions.POST with per-field type, required, read_only, label and
+    enum choices — a real, if partial, machine-readable field schema. Everywhere else
+    OPTIONS is itself authenticated (401/403), so the schema is not publicly readable.
+
+expansion:
+  supported: unknown
+  note: Not determinable without credentials.
+
+metadata_fields:
+  note: >-
+    The Event resource carries a free-form `data` field alongside typed id, user,
+    created_at and last_updated fields — an untyped JSON bag rather than a documented
+    metadata convention.
+
+security_headers:
+  strict_transport_security: max-age=31536000; includeSubDomains
+  x_frame_options: DENY
+  x_content_type_options: nosniff
+  referrer_policy: same-origin
+  cross_origin_opener_policy: same-origin
+  note: >-
+    referrer-policy is emitted TWICE with conflicting values (same-origin from
+    Django, then strict-origin-when-cross-origin from the edge). Harmless in practice
+    but a misconfiguration.
+
+related:
+  authentication: authentication/flockjay-authentication.yml
+  errors: errors/flockjay-problem-types.yml
+  lifecycle: lifecycle/flockjay-lifecycle.yml
+  rate_limits: rate-limits/flockjay-rate-limits.yml
+  data_model: data-model/flockjay-data-model.yml
