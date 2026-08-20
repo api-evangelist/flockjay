@@ -48,6 +48,18 @@ tags:
 - Revenue Operations
 - AI Coaching
 - Content Management
+- Software-as-a-Service
+- MCP
+- agent-native
+- Authentication
+tags_raw:
+- Company
+- Sales Enablement
+- Sales Training
+- Learning Management
+- Revenue Operations
+- AI Coaching
+- Content Management
 - SaaS
 - MCP
 - Agent Native
@@ -99,6 +111,11 @@ apis:
   humanURL: https://flockjay.com/resources/blog/ai-enablement-mcp-server
   baseURL: https://api.flockjay.com/mcp
   tags:
+  - MCP
+  - agent-native
+  - Sales Enablement
+  - AI Coaching
+  tags_raw:
   - MCP
   - Agent Native
   - Sales Enablement
