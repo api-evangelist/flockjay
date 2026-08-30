@@ -61,7 +61,7 @@ tags:
 - Content Management
 - Software-as-a-Service
 - MCP
-- agent-native
+- Agent Native
 - Authentication
 tags_raw:
 - Company
@@ -123,7 +123,7 @@ apis:
   baseURL: https://api.flockjay.com/mcp
   tags:
   - MCP
-  - agent-native
+  - Agent Native
   - Sales Enablement
   - AI Coaching
   tags_raw:
