@@ -61,7 +61,7 @@ tags:
 - Content Management
 - Software-as-a-Service
 - MCP
-- agent-native
+- Agent-Native
 - Authentication
 tags_raw:
 - Company
@@ -75,6 +75,7 @@ tags_raw:
 - MCP
 - Agent Native
 - OAuth
+- agent-native
 apis:
 - name: Flockjay API
   description: >-
@@ -123,7 +124,7 @@ apis:
   baseURL: https://api.flockjay.com/mcp
   tags:
   - MCP
-  - agent-native
+  - Agent-Native
   - Sales Enablement
   - AI Coaching
   tags_raw:
@@ -131,6 +132,7 @@ apis:
   - Agent Native
   - Sales Enablement
   - AI Coaching
+  - agent-native
   properties:
   - type: MCPServer
     url: mcp/flockjay-mcp.yml
