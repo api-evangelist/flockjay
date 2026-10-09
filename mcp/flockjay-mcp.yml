@@ -94,3 +94,19 @@ related:
   well_known: well-known/flockjay-well-known.yml
   authentication: authentication/flockjay-authentication.yml
   scopes: scopes/flockjay-scopes.yml
+rfc9728:
+  endpoint: https://api.flockjay.com/mcp
+  metadata_url: https://api.flockjay.com/.well-known/oauth-protected-resource/mcp
+  discovered_via: WWW-Authenticate resource_metadata on an anonymous POST initialize
+  fetched: '2026-09-25'
+  http_status: 200
+  content_type: application/json
+  document:
+    resource: https://api.flockjay.com/mcp
+    authorization_servers:
+    - https://api.flockjay.com
+    scopes_supported:
+    - read
+    - offline_access
+    bearer_methods_supported:
+    - header
