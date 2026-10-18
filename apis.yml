@@ -55,7 +55,7 @@ tags:
 - Company
 - Sales Enablement
 - Sales Training
-- Learning Management
+- LMS
 - Revenue Operations
 - AI Coaching
 - Content Management
@@ -91,6 +91,11 @@ apis:
   humanURL: https://api.flockjay.com/api/
   baseURL: https://api.flockjay.com/api/
   tags:
+  - Sales Enablement
+  - LMS
+  - Content Management
+  - Revenue Operations
+  tags_raw:
   - Sales Enablement
   - Learning Management
   - Content Management
