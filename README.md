@@ -64,24 +64,125 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Flockjay is a sales enablement platform (LMS + sales content management + AI coaching), first
-surfaced as a portfolio company of Lightspeed Venture Partners.
+Flockjay is a sales enablement platform that helps revenue teams capture, organize, and scale their best practices. It combines a learning management system, a content and knowledge management system, and AI-powered coaching — including semantic search across sales content, real-time deal and rep coaching, call scoring, and pitch grading — so sales leaders, revenue operations, and enablement professionals can onboard reps faster and reinforce winning behaviors. Flockjay advertises 50+ integrations with tools such as Gong, Chorus, Clari Copilot, Slack, Microsoft Teams, Zoom, Salesforce and Okta, and is backed by Lightspeed Venture Partners, e.ventures and Salesforce Ventures. Flockjay runs a Django REST Framework API at api.flockjay.com whose root anonymously enumerates 20 collections across two version trees, and a hosted, OAuth 2.1-protected Model Context Protocol server at api.flockjay.com/mcp that it announced on its own blog. Neither is documented: there is no developer portal, no API reference, no OpenAPI, no SDK and no pricing page anywhere on flockjay.com.
 
-**This profile was previously recorded as having no developer API. That was wrong, and it has been
-corrected.** A 2026-08-14 enrichment pass found two live API surfaces that Flockjay does not
-document anywhere:
+**Areas:** Company · Sales Enablement · Sales Training · LMS · Revenue Operations · AI Coaching · Content Management · Software-as-a-Service · MCP · Agent-Native · Authentication
 
-- **`https://api.flockjay.com/api/`** — a Django REST Framework API whose root is anonymously
-  readable and enumerates 20 collections across two version trees. Every collection requires a
-  Flockjay-issued token. There is no OpenAPI, no reference, and no developer portal.
-- **`https://api.flockjay.com/mcp`** — a hosted Model Context Protocol server, announced on
-  [Flockjay's own blog](https://flockjay.com/resources/blog/ai-enablement-mcp-server), protected by
-  OAuth 2.1 authorization-code + PKCE with RFC 9728 protected-resource metadata and RFC 7591
-  dynamic client registration. Anonymous `tools/list` returns HTTP 401, so the tool list is not
-  public.
+## Flockjay on APIs.io
 
-The authorization layer is genuinely standards-based and correctly cross-linked. The REST API
-beneath it publishes no contract, no error vocabulary, no idempotency, no rate-limit signal and no
-deprecation policy. See `conformance/`, `conventions/` and `mcp/` for the evidence.
+Everything profiled for Flockjay is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/flockjay/](https://apis.io/providers/flockjay/)** — or go straight to one of the APIs or properties below.
 
-Backed by: lightspeed-venture-partners
+### APIs (2)
+
+- [Flockjay API](https://apis.io/apis/flockjay/flockjay-api/) — Django REST Framework API behind the Flockjay platform. The API root at https://api.flockjay.com/api/ is anonymously readable and enumerates 20 collections…
+- [Flockjay MCP Server](https://apis.io/apis/flockjay/flockjay-mcp-server/) — Hosted, first-party Model Context Protocol server that gives AI assistants read access to a customer's enablement data — rep certification and learning…
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [Flockjay MCP Server](https://apis.io/servers/flockjay/flockjay-mcp-server/)
+
+#### JSON Schema (1)
+
+The data models the API reads and writes.
+
+- [Flockjay Events Options Metadata](https://apis.io/schemas/flockjay/flockjay-events-options-metadata/)
+
+#### Security (4)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Flockjay Authentication](https://apis.io/security/flockjay/flockjay-authentication/)
+- [Flockjay Domain Security](https://apis.io/security/flockjay/flockjay-domain-security/)
+- [Flockjay Trust Center](https://apis.io/security/flockjay/flockjay-trust-center/)
+- [Flockjay Vulnerability Disclosure](https://apis.io/security/flockjay/flockjay-vulnerability-disclosure/)
+
+#### OAuth scopes (1)
+
+The permissions the API asks for.
+
+- [Flockjay Scopes](https://apis.io/scopes/flockjay/flockjay-scopes/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Flockjay Plans Pricing](https://apis.io/plans/flockjay/flockjay-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Flockjay Rate Limits](https://apis.io/rate-limits/flockjay/flockjay-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://flockjay.com)
+- [Support](https://flockjay.com/resources/support)
+- [Blog](https://flockjay.com/resources/blog)
+- [Trust centre](https://flockjay.com/product/trust-center)
+- [Terms of service](https://flockjay.com/legal/terms-and-conditions)
+- [Privacy policy](https://flockjay.com/legal/privacy-policy)
+- [GitHub](https://github.com/Flockjay)
+
+## API Evangelist rating
+
+**Kin Score 29.4** — thin · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 68.3 |
+| Contract quality | 7.2 |
+| Contract governance | 18.2 |
+| Operational transparency | 13.2 |
+| Developer ergonomics | 28.6 |
+| Access clarity | 35.5 |
+
+**Agent readiness 32.7** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | — |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | verified |
+| Auth Clarity | served (partial credit) |
+| Idempotency | — |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | — |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | verified |
+| Dynamic Client Registration | yes |
+| Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | na |
+
+**Regulatory alignment 45.1** — Education & Research
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/flockjay/](https://apis.io/providers/flockjay/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Flockjay: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/flockjay/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
